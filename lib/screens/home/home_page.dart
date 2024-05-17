@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'New style',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Color.fromARGB(255, 8, 182, 124),
                                     fontWeight: FontWeight.w800,
                                     fontSize: 32,
                                   ),
@@ -130,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'New Collects',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Color.fromARGB(255, 8, 182, 124),
                                     fontWeight: FontWeight.w800,
                                     fontSize: 32,
                                   ),

@@ -18,12 +18,16 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<User?> login(String email, String password) async {
-    print("LOGIN FUNCTION");
+    if (kDebugMode) {
+      print("LOGIN FUNCTION");
+    }
     final response = await Dio().get("https://fakestoreapi.com/users");
     // final response = await http.get(
     //   Uri.parse('https://fakestoreapi.com/users'),
     // );
-    print(response);
+    if (kDebugMode) {
+      print(response);
+    }
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.data);
       if (kDebugMode) {

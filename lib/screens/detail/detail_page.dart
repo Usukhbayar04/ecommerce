@@ -115,7 +115,8 @@ class _DetailPageState extends State<DetailPage> {
                     }
                     Navigator.push(
                       (context),
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   }
                 },
@@ -177,8 +178,10 @@ class _DetailPageState extends State<DetailPage> {
                       if (authProvider.isLoggedIn) {
                         providerFavo.toggleFavorite(widget.data);
                       } else {
-                        Navigator.push((context),
-                            MaterialPageRoute(builder: (_) => LoginPage()));
+                        Navigator.push(
+                            (context),
+                            MaterialPageRoute(
+                                builder: (_) => const LoginPage()));
                       }
                     },
                     icon: Icon(

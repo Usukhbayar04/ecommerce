@@ -34,7 +34,9 @@ class _LoginPageState extends State<LoginPage> {
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
         try {
-          print("$email");
+          if (kDebugMode) {
+            print(email);
+          }
           if (email != null && password != null) {
             // Add null check here
             User? authenticatedUser = await authProvider.login(email, password);

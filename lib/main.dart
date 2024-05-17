@@ -4,6 +4,10 @@ import 'package:ecommerce_app/main_page.dart';
 import 'package:ecommerce_app/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screens/bag/bag_page.dart';
+import 'screens/home/home_page.dart';
+import 'screens/profile/profile_page.dart';
+import 'screens/shop/shop_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +32,14 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
             scaffoldBackgroundColor: const Color.fromARGB(255, 233, 227, 227),
           ),
-          home: const MainPage(),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const MainPage(),
+            '/home': (context) => const HomePage(),
+            '/shop': (context) => const ShopPage(),
+            '/bag': (context) => const BagPage(),
+            '/profile': (context) => const ProfilePage(),
+          },
         ),
       );
 }

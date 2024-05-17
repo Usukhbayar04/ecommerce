@@ -133,7 +133,7 @@ class ProductCard extends StatelessWidget {
                             Navigator.push(
                                 (context),
                                 MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
+                                    builder: (context) => const LoginPage()));
                           }
                         },
                         child: Icon(
