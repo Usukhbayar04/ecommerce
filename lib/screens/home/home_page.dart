@@ -1,5 +1,6 @@
-import 'dart:convert';
 import 'dart:math';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../models/products.dart';
 import 'productCard.dart';
@@ -16,14 +17,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.width;
 
-    Future<List<ProductModel>> getData() async {
-      String result = await DefaultAssetBundle.of(context)
-          .loadString("assets/data/products.json");
-      return ProductModel.fromList(jsonDecode(result));
+    Future<List<ProductModel>> getDataProduct() async {
+      try {
+        final response = await Dio().get('http://fakestoreapi.com/products');
+        if (response.statusCode == 200) {
+          List<dynamic> data = response.data;
+          return ProductModel.fromList(data);
+        } else {
+          throw Exception('Failed to load products');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error: $e');
+        }
+        throw Exception('Failed to load products');
+      }
     }
 
     return FutureBuilder(
-      future: getData(),
+      future: getDataProduct(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return SingleChildScrollView(
@@ -147,7 +159,6 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 15),
                       SizedBox(
                         height: 250,
                         child: SingleChildScrollView(

@@ -1,7 +1,9 @@
 import 'package:ecommerce_app/Provider/card_provider.dart';
 import 'package:ecommerce_app/Provider/favorite_provider.dart';
-import 'package:ecommerce_app/main_page.dart';
+import 'package:ecommerce_app/global_keys.dart';
 import 'package:ecommerce_app/provider/auth_provider.dart';
+import 'package:ecommerce_app/provider/global_provider.dart';
+import 'package:ecommerce_app/screens/login_signup/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/bag/bag_page.dart';
@@ -22,9 +24,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => CartProvider()),
           ChangeNotifierProvider(create: (_) => FavoriteProvider()),
           ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => Global_provider()),
         ],
         child: MaterialApp(
           title: 'Flutter Demo',
+          navigatorKey: GlobalKeys.navigatorKey,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 231, 227, 227),
@@ -34,7 +38,7 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: '/',
           routes: {
-            '/': (context) => const MainPage(),
+            '/': (context) => const LoginPage(),
             '/home': (context) => const HomePage(),
             '/shop': (context) => const ShopPage(),
             '/bag': (context) => const BagPage(),

@@ -1,30 +1,49 @@
-import 'dart:convert';
 import 'dart:math';
+import 'package:ecommerce_app/repository/repository.dart';
 import 'package:flutter/material.dart';
 import '../../models/products.dart';
 import 'shopCard.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
+
   @override
   State<ShopPage> createState() => _ShopPageState();
 }
 
 class _ShopPageState extends State<ShopPage> {
-  Future<List<ProductModel>> _getData() async {
-    String result = await DefaultAssetBundle.of(context)
-        .loadString("assets/data/products.json");
-    return ProductModel.fromList(jsonDecode(result));
+  Future<List<ProductModel>> _getDataProduct() async {
+    try {
+      List<ProductModel>? data = await MyRepository().fetchProductData();
+      if (data != null) {
+        return data;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      throw Exception('Failed to load products: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _getData(),
+    return FutureBuilder<List<ProductModel>>(
+      future: _getDataProduct(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+              SizedBox(height: 30),
+              Text('API connecting data'),
+            ],
+          );
+        } else if (snapshot.hasData) {
           return Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(20),
             child: SafeArea(
               child: Column(
                 children: [
@@ -49,10 +68,6 @@ class _ShopPageState extends State<ShopPage> {
                 ],
               ),
             ),
-          );
-        } else if (ConnectionState.waiting == snapshot.connectionState) {
-          return const Center(
-            child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
           return const Center(

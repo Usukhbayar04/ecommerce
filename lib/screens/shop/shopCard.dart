@@ -119,7 +119,8 @@ class ShopCard extends StatelessWidget {
                     ],
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         "\$${data.price!.toString()}",
@@ -128,10 +129,6 @@ class ShopCard extends StatelessWidget {
                           color: Colors.black,
                           fontWeight: FontWeight.w700,
                         ),
-                      ),
-                      const Icon(
-                        Icons.favorite_border,
-                        size: 24,
                       ),
                     ],
                   ),

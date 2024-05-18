@@ -21,12 +21,9 @@ class AuthProvider extends ChangeNotifier {
     if (kDebugMode) {
       print("LOGIN FUNCTION");
     }
-    final response = await Dio().get("https://fakestoreapi.com/users");
-    // final response = await http.get(
-    //   Uri.parse('https://fakestoreapi.com/users'),
-    // );
+    final response = await Dio().get("https://fakestoreapi.com/users/1");
     if (kDebugMode) {
-      print(response);
+      print("data is :\n  {$response}");
     }
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.data);
@@ -41,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
           _isLoggedIn = true;
           _currentUser = User.fromJson(user);
           notifyListeners();
+          // print('USER IS: ${user.toString()}');
           return _currentUser;
         }
       }
@@ -53,3 +51,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 }
+    // "email": "john@gmail.com",
+    // "username": "johnd",
+    // "password": "m38rmF$",

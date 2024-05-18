@@ -1,17 +1,15 @@
-// ignore_for_file: unnecessary_null_comparison
-// import 'dart:math';
-
+import 'dart:convert';
+import 'package:ecommerce_app/main_page.dart';
+import 'package:ecommerce_app/provider/global_provider.dart';
 import 'package:ecommerce_app/screens/home/home_page.dart';
 import 'package:ecommerce_app/utils/sizes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../provider/auth_provider.dart';
-import '../../models/user.dart';
 import '../../widgets/customButton.dart';
+import 'package:http/http.dart' as http;
 import '../../widgets/customTextfield.dart';
 import '../../widgets/mTextStyle.dart';
-import '../profile/profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,62 +19,56 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  Future<void> moveToHome(BuildContext context) async {
+    var headers = {'Content-Type': 'application/json'};
+    var request =
+        http.Request('POST', Uri.parse('https://fakestoreapi.com/auth/login'));
+    request.body = json.encode(
+      {
+        "username": usernameController.text,
+        "password": passwordController.text,
+      },
+    );
+    request.headers.addAll(headers);
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String responseBody =
+          await response.stream.bytesToString(); // Read the stream only once
+      if (kDebugMode) {
+        print(responseBody); // Print the response for debugging
+      }
+      Map<String, dynamic> jsonMap = json.decode(responseBody);
+
+      if (jsonMap.containsKey("token")) {
+        await Provider.of<Global_provider>(context, listen: false)
+            .saveToken(jsonMap["token"]);
+        if (kDebugMode) {
+          print(await Provider.of<Global_provider>(context, listen: false)
+              .getToken());
+        }
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const MainPage()));
+      } else {
+        showErrorMessage(context, "Token not found in response");
+      }
+    } else {
+      showErrorMessage(context, "Login failed: ${response.reasonPhrase}");
+    }
+  }
+
+  void showErrorMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<void> login(BuildContext context) async {
-      if (_formKey.currentState!.validate()) {
-        final email = emailController.text.trim();
-        final password = passwordController.text;
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-        try {
-          if (kDebugMode) {
-            print(email);
-          }
-          if (email != null && password != null) {
-            // Add null check here
-            User? authenticatedUser = await authProvider.login(email, password);
-            if (authenticatedUser != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const ProfilePage(),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Invalid email or password'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            }
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Email or password is null'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-        } catch (error) {
-          if (kDebugMode) {
-            print('user not found!!!');
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error.toString()),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -112,16 +104,12 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     CustomTextField(
-                      controller: emailController,
-                      hintText: 'Email',
+                      controller: usernameController,
+                      hintText: 'Username',
                       obscureText: false,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                        if (!emailRegex.hasMatch(value)) {
-                          return 'Please enter a valid email address';
+                          return 'Please enter your username';
                         }
                         return null;
                       },
@@ -148,7 +136,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     heightMax,
                     CustomButton(
-                      onPressed: () => login(context),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await moveToHome(context);
+                        }
+                      },
                       text: 'LOGIN',
                     ),
                   ],
@@ -186,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 60,
                           height: 60,
                         ),
-                        widthMedium,
+                        SizedBox(width: 20), // Adjusted spacing
                         Image(
                           image: AssetImage('assets/images/facebook.png'),
                           width: 60,
